@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Minecraft Launcher</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #121214;
+            color: #e1e1e6;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #1a1a1e;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            border-right: 1px solid #29292e;
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            color: #00b37e;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: #a8a8b3;
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: 0.2s;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background-color: #29292e;
+            color: #fff;
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            max-width: 400px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            color: #c4c4cc;
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background-color: #202024;
+            border: 1px solid #29292e;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #00b37e;
+        }
+
+        .play-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .btn-play {
+            background-color: #00875f;
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 135, 95, 0.4);
+        }
+
+        .btn-play:hover {
+            background-color: #00b37e;
+        }
+
+        .btn-save {
+            background-color: #29292e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-save:hover {
+            background-color: #323238;
+        }
+
+        /* Стиль для статус-тексту завантаження */
+        #status-text {
+            font-size: 14px;
+            color: #00b37e;
+            font-weight: 500;
+            max-width: 500px;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>MC Launcher</h2>
+        <button class="nav-btn active" onclick="switchTab('play', event)">Home</button>
+        <button class="nav-btn" onclick="switchTab('settings', event)">Settings</button>
+    </div>
+
+    <div class="content">
+        <div id="tab-play" class="tab-content active">
+            <h1>Play Minecraft</h1>
+            <div class="form-group">
+                <label>Selected Version:</label>
+                <select id="main-version">
+                    <option value="1.21.4">Loading versions...</option>
+                </select>
+            </div>
+            
+            <div class="play-section" style="margin-top: 40px;">
+                <button class="btn-play" onclick="launchGame()">PLAY</button>
+                <!-- Індикатор статусу завантаження та запуску -->
+                <p id="status-text">Готовий до запуску</p>
+            </div>
+        </div>
+
+        <div id="tab-settings" class="tab-content">
+            <h1>Launcher Settings</h1>
+            
+            <div class="form-group">
+                <label>Player Username:</label>
+                <input type="text" id="username" placeholder="Player">
+            </div>
+
+            <div class="form-group">
+                <label>Allocated RAM (in MB):</label>
+                <input type="number" id="ram-mb" placeholder="4096" min="512" step="512">
+            </div>
+
+            <button class="btn-save" onclick="saveSettings(true)">Save Settings</button>
+        </div>
+    </div>
+
+    <script>
+        const getInvoke = () => (window.__TAURI__ && window.__TAURI__.core) 
+            ? window.__TAURI__.core.invoke 
+            : (window.__TAURI__ ? window.__TAURI__.invoke : null);
+
+        function switchTab(tabName, event) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+            if (tabName === 'play') {
+                document.getElementById('tab-play').classList.add('active');
+                if (event && event.target) event.target.classList.add('active');
+            } else if (tabName === 'settings') {
+                document.getElementById('tab-settings').classList.add('active');
+                if (event && event.target) event.target.classList.add('active');
+            }
+        }
+
+        async function loadMinecraftVersions(preferredVersion) {
+            const versionSelect = document.getElementById("main-version");
+            const cachedVersions = localStorage.getItem("mc_versions_cache");
+            
+            if (cachedVersions) {
+                try {
+                    populateVersionSelect(JSON.parse(cachedVersions), preferredVersion);
+                } catch (e) {}
+            }
+
+            try {
+                const response = await fetch("https://launchermeta.mojang.com/mc/game/version_manifest.json");
+                const data = await response.json();
+                localStorage.setItem("mc_versions_cache", JSON.stringify(data.versions));
+                populateVersionSelect(data.versions, preferredVersion);
+            } catch (e) {
+                if (!cachedVersions) {
+                    versionSelect.innerHTML = `<option value="1.21.4">1.21.4</option>`;
+                }
+            }
+        }
+
+        function populateVersionSelect(versions, preferredVersion) {
+            const versionSelect = document.getElementById("main-version");
+            const currentSelected = versionSelect.value;
+            
+            versionSelect.innerHTML = "";
+            versions.forEach(ver => {
+                const option = document.createElement("option");
+                option.value = ver.id;
+                option.textContent = `${ver.id} (${ver.type})`;
+                versionSelect.appendChild(option);
+            });
+
+            if (preferredVersion && Array.from(versionSelect.options).some(o => o.value === preferredVersion)) {
+                versionSelect.value = preferredVersion;
+            } else if (currentSelected) {
+                versionSelect.value = currentSelected;
+            }
+        }
+
+        async function saveSettings(showAlert = false) {
+            const invoke = getInvoke();
+            if (!invoke) return;
+
+            const username = document.getElementById("username").value.trim() || "Player";
+            const ramMb = parseInt(document.getElementById("ram-mb").value) || 4096;
+            const ramGbValue = Math.max(1, Math.round(ramMb / 1024));
+            const version = document.getElementById("main-version").value;
+
+            const newSettings = {
+                username: username,
+                selectedVersion: version,
+                selected_version: version,
+                ramGb: ramGbValue,
+                ram_gb: ramGbValue,
+                javaPath: "java",
+                java_path: "java"
+            };
+
+            try {
+                await invoke("save_settings_cmd", { settings: newSettings });
+                if (showAlert) alert("Settings saved successfully!");
+            } catch (e) {
+                console.error("Save error:", e);
+                if (showAlert) alert("Save error: " + e);
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", async () => {
+            const invoke = getInvoke();
+            if (invoke) {
+                try {
+                    const settings = await invoke("get_settings");
+                    if (settings) {
+                        document.getElementById("username").value = settings.username || settings.userName || "Player";
+                        
+                        const ram = settings.ramGb || settings.ram_gb || 4;
+                        document.getElementById("ram-mb").value = ram * 1024;
+
+                        const savedVer = settings.selectedVersion || settings.selected_version || "1.21.4";
+                        await loadMinecraftVersions(savedVer);
+                    }
+                } catch (e) {
+                    console.error("Error loading settings:", e);
+                    await loadMinecraftVersions("1.21.4");
+                }
+            } else {
+                await loadMinecraftVersions("1.21.4");
+            }
+
+            document.getElementById("main-version").addEventListener("change", () => saveSettings(false));
+            document.getElementById("username").addEventListener("input", () => saveSettings(false));
+            document.getElementById("ram-mb").addEventListener("input", () => saveSettings(false));
+        });
+
+        async function launchGame() {
+            const statusText = document.getElementById("status-text");
+            statusText.style.color = "#00b37e";
+            statusText.innerText = "Зберігаємо налаштування...";
+
+            await saveSettings(false);
+            const invoke = getInvoke();
+            if (!invoke) {
+                statusText.style.color = "#f75a68";
+                statusText.innerText = "Помилка: Tauri invoke не знайдено!";
+                return;
+            }
+
+            const username = document.getElementById("username").value.trim() || "Player";
+            const ramMb = parseInt(document.getElementById("ram-mb").value) || 4096;
+            const ramGbValue = Math.max(1, Math.round(ramMb / 1024));
+            const version = document.getElementById("main-version").value;
+
+            try {
+                statusText.innerText = `Завантаження та запуск Minecraft ${version}... (Дивіться лог у терміналі)`;
+
+                const result = await invoke("launch_minecraft", { 
+                    username: username, 
+                    ramGb: ramGbValue, 
+                    version: version 
+                });
+
+                statusText.style.color = "#00b37e";
+                statusText.innerText = result;
+                alert(result);
+            } catch (e) {
+                console.error("Launch error:", e);
+                statusText.style.color = "#f75a68";
+                statusText.innerText = "Помилка: " + e;
+                alert("Launch error: " + e);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+[18:40:14] [Client thread/INFO]: Setting user: l0pol
+[18:40:15] [Client thread/WARN]: Skipping bad option: lastServer:
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.pickItem:key.mouse.middle
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.playerlist:key.keyboard.tab
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.advancements:key.keyboard.l
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.5:key.keyboard.5
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.6:key.keyboard.6
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.7:key.keyboard.7
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.8:key.keyboard.8
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.1:key.keyboard.1
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.2:key.keyboard.2
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.3:key.keyboard.3
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.4:key.keyboard.4
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.sprint:key.keyboard.left.control
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.forward:key.keyboard.w
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.drop:key.keyboard.q
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.back:key.keyboard.s
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.attack:key.mouse.left
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.use:key.mouse.right
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.saveToolbarActivator:key.keyboard.c
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.smoothCamera:key.keyboard.unknown
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.right:key.keyboard.d
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.jump:key.keyboard.space
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.sneak:key.keyboard.left.shift
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.spectatorOutlines:key.keyboard.unknown
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.left:key.keyboard.a
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.command:key.keyboard.slash
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.screenshot:key.keyboard.f2
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.9:key.keyboard.9
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.togglePerspective:key.keyboard.f5
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.chat:key.keyboard.t
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.inventory:key.keyboard.e
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.fullscreen:key.keyboard.f11
+[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.loadToolbarActivator:key.keyboard.x
+[18:40:15] [Client thread/INFO]: LWJGL Version: 2.9.4
