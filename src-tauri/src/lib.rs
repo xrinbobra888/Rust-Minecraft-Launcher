@@ -265,7 +265,12 @@ async fn launch_minecraft(username: String, ram_gb: u32, version: String) -> Res
             }
         }
 
-        let classpath = classpath_entries.join(";");
+        let classpath = if cfg!(target_os = "windows") {
+                                    classpath_entries.join(";")
+                                } 
+                                else {
+                                    classpath_entries.join(":")
+                                };
 
         let offline_uuid = Uuid::new_v3(&Uuid::NAMESPACE_DNS, format!("OfflinePlayer:{}", username).as_bytes())
             .simple()
@@ -273,6 +278,7 @@ async fn launch_minecraft(username: String, ram_gb: u32, version: String) -> Res
 
         let assets_dir = mc_dir.join("assets");
         let main_class = version_data.main_class.unwrap_or_else(|| "net.minecraft.client.main.Main".to_string());
+
 
         println!("[Launcher] Запуск процесу Java (Гравця: {}, Версія: {}, RAM: {}GB)...", username, version, ram_gb);
         let status = Command::new("java")
@@ -297,7 +303,8 @@ async fn launch_minecraft(username: String, ram_gb: u32, version: String) -> Res
             Ok(format!("Minecraft {} успішно завершив роботу!", version))
         } else {
             Err(format!("Гра завершилася з кодом помилки: {:?}", status.code()))
-        }
+        } 
+
     }.await;
 
     result
