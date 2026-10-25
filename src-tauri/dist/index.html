@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <title>Minecraft Launcher</title>
     <style>
+        :root {
+            --accent-color: #00b37e;
+            --accent-hover: #00875f;
+            --button-custom-bg: #202024;
+            --button-custom-hover: #29292e;
+            --bg-color: #121214;
+            --sidebar-color: #1a1a1e;
+            --input-bg: #202024;
+            --border-color: #29292e;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -12,25 +23,28 @@
         }
 
         body {
-            background-color: #121214;
+            background-color: var(--bg-color);
             color: #e1e1e6;
             display: flex;
             height: 100vh;
             overflow: hidden;
+            background-size: cover;
+            background-position: center;
         }
 
         .sidebar {
             width: 220px;
-            background-color: #1a1a1e;
+            background-color: var(--sidebar-color);
             display: flex;
             flex-direction: column;
             padding: 20px;
-            border-right: 1px solid #29292e;
+            border-right: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
         }
 
         .sidebar h2 {
             font-size: 18px;
-            color: #00b37e;
+            color: var(--accent-color);
             margin-bottom: 30px;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -50,7 +64,7 @@
         }
 
         .nav-btn:hover, .nav-btn.active {
-            background-color: #29292e;
+            background-color: var(--button-custom-bg);
             color: #fff;
         }
 
@@ -60,15 +74,20 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            overflow-y: auto;
+            background: rgba(18, 18, 20, 0.85);
+            backdrop-filter: blur(5px);
             position: relative;
         }
 
         .tab-content {
             display: none;
+            height: 100%;
         }
 
         .tab-content.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
         }
 
         h1 {
@@ -77,9 +96,42 @@
             color: #fff;
         }
 
+        .settings-subnav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .sub-btn {
+            background: transparent;
+            border: none;
+            color: #a8a8b3;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .sub-btn:hover, .sub-btn.active {
+            background-color: var(--button-custom-bg);
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .settings-section {
+            display: none;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
         .form-group {
             margin-bottom: 20px;
-            max-width: 400px;
+            max-width: 450px;
         }
 
         label {
@@ -92,8 +144,8 @@
         input, select {
             width: 100%;
             padding: 12px;
-            background-color: #202024;
-            border: 1px solid #29292e;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             color: #fff;
             font-size: 14px;
@@ -102,7 +154,57 @@
         }
 
         input:focus, select:focus {
-            border-color: #00b37e;
+            border-color: var(--accent-color);
+        }
+
+        .color-picker-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: 1px solid #2a2e39;
+            border-radius: 8px;
+            width: 46px;
+            height: 44px;
+            padding: 4px;
+            background-color: #0b0c10;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        input[type="color"]:hover {
+            border-color: var(--accent-color);
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: 1px solid #1f222d;
+            border-radius: 5px;
+        }
+
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        input[type="range"] {
+            accent-color: var(--accent-color);
+            cursor: pointer;
+            padding: 0;
+            flex: 1;
+        }
+
+        .range-value {
+            font-size: 14px;
+            color: var(--accent-color);
+            min-width: 30px;
         }
 
         .play-section {
@@ -110,10 +212,12 @@
             flex-direction: column;
             align-items: flex-start;
             gap: 15px;
+            margin-top: 40px;
         }
 
+        /* Knopka PLAY ne zminyuyet'sya */
         .btn-play {
-            background-color: #00875f;
+            background-color: var(--accent-hover);
             color: white;
             border: none;
             padding: 16px 40px;
@@ -122,35 +226,114 @@
             border-radius: 8px;
             cursor: pointer;
             transition: 0.2s;
-            box-shadow: 0 4px 12px rgba(0, 135, 95, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
 
         .btn-play:hover {
-            background-color: #00b37e;
+            background-color: var(--accent-color);
         }
 
-        .btn-save {
+        .btn-play:disabled {
             background-color: #29292e;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 14px;
+            color: #666;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Minimalystychna knopka Save Settings */
+        .btn-save {
+            background-color: var(--button-custom-bg);
+            color: #e1e1e6;
+            border: 1px solid var(--border-color);
+            padding: 9px 18px;
+            font-size: 13px;
+            font-weight: 500;
             border-radius: 6px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s ease;
+            margin-top: 15px;
+            width: fit-content;
+            align-self: flex-start;
         }
 
         .btn-save:hover {
-            background-color: #323238;
+            background-color: var(--button-custom-hover);
+            border-color: var(--accent-color);
+            color: #fff;
         }
 
-        /* Стиль для статус-тексту завантаження */
-        #status-text {
-            font-size: 14px;
-            color: #00b37e;
-            font-weight: 500;
+        .btn-open-folder {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            background-color: var(--button-custom-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-open-folder:hover {
+            border-color: var(--accent-color);
+            background-color: var(--button-custom-hover);
+            transform: scale(1.05);
+        }
+
+        .btn-open-folder svg {
+            width: 22px;
+            height: 22px;
+            fill: var(--accent-color);
+        }
+
+        .progress-wrapper {
+            margin-top: 15px;
+            width: 100%;
             max-width: 500px;
-            word-break: break-word;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .progress-wrapper.visible {
+            opacity: 1;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: #202024;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--accent-color);
+            transition: width 0.2s ease;
+        }
+
+        .progress-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #c4c4cc;
+            margin-top: 6px;
+        }
+
+        #progressText {
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        #progressPercent {
+            font-weight: bold;
         }
     </style>
 </head>
@@ -168,31 +351,99 @@
             <div class="form-group">
                 <label>Selected Version:</label>
                 <select id="main-version">
-                    <option value="1.21.4">Loading versions...</option>
+                    <option value="1.21.1">Loading versions...</option>
                 </select>
             </div>
             
-            <div class="play-section" style="margin-top: 40px;">
-                <button class="btn-play" onclick="launchGame()">PLAY</button>
-                <!-- Індикатор статусу завантаження та запуску -->
-                <p id="status-text">Готовий до запуску</p>
+            <div class="play-section">
+                <button id="playBtn" class="btn-play" onclick="launchGame()">PLAY</button>
+                
+                <div id="progressWrapper" class="progress-wrapper">
+                    <div class="progress-bar-container">
+                        <div id="progressBar" class="progress-bar-fill"></div>
+                    </div>
+                    <div class="progress-details">
+                        <span id="progressText">Initializing...</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div id="tab-settings" class="tab-content">
             <h1>Launcher Settings</h1>
             
-            <div class="form-group">
-                <label>Player Username:</label>
-                <input type="text" id="username" placeholder="Player">
+            <div class="settings-subnav">
+                <button class="sub-btn active" onclick="switchSettingsSection('general', event)">General</button>
+                <button class="sub-btn" onclick="switchSettingsSection('performance', event)">Performance</button>
+                <button class="sub-btn" onclick="switchSettingsSection('appearance', event)">Appearance</button>
             </div>
 
-            <div class="form-group">
-                <label>Allocated RAM (in MB):</label>
-                <input type="number" id="ram-mb" placeholder="4096" min="512" step="512">
+            <!-- General -->
+            <div id="sec-general" class="settings-section active">
+                <div class="form-group">
+                    <label>Player Username:</label>
+                    <input type="text" id="username" placeholder="Player">
+                </div>
+
+                <div class="form-group">
+                    <label>Java Executable Path:</label>
+                    <input type="text" id="java-path" placeholder="java">
+                </div>
+            </div>
+
+            <!-- Performance -->
+            <div id="sec-performance" class="settings-section">
+                <div class="form-group">
+                    <label>Allocated RAM (in MB):</label>
+                    <div class="range-container">
+                        <input type="range" id="ramRange" min="1024" max="16384" step="512" value="4096" oninput="syncRamInput('range', this.value)">
+                        <input type="number" id="ramNumber" min="512" max="65536" step="512" value="4096" style="width: 110px;" oninput="syncRamInput('number', this.value)">
+                        <span class="range-value">MB</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Garbage Collector (GC):</label>
+                    <select id="gcType">
+                        <option value="G1GC">G1GC (Default / Recommended)</option>
+                        <option value="ZGC">ZGC (Low Latency)</option>
+                        <option value="Parallel">Parallel GC</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Appearance -->
+            <div id="sec-appearance" class="settings-section">
+                <div class="form-group">
+                    <label>Custom Font Color</label>
+                    <div class="color-picker-container">
+                        <input type="color" id="accentPicker" value="#00b37e" oninput="syncColorInput('picker', this.value)">
+                        <input type="text" id="accentHex" value="#00b37e" placeholder="#00b37e" style="width: 130px;" oninput="syncColorInput('hex', this.value)">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Custom Buttons Color:</label>
+                    <div class="color-picker-container">
+                        <input type="color" id="buttonPicker" value="#202024" oninput="syncButtonColor('picker', this.value)">
+                        <input type="text" id="buttonHex" value="#202024" placeholder="#202024" style="width: 130px;" oninput="syncButtonColor('hex', this.value)">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Background Image (in URL):</label>
+                    <input type="text" id="bgImage" placeholder="https://example.com/image.jpg" oninput="applyTheme()">
+                </div>
             </div>
 
             <button class="btn-save" onclick="saveSettings(true)">Save Settings</button>
+
+            <button class="btn-open-folder" onclick="openGameFolder()" title="Open .minecraft Folder">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
+                </svg>
+            </button>
         </div>
     </div>
 
@@ -214,8 +465,85 @@
             }
         }
 
+        function switchSettingsSection(secName, event) {
+            document.querySelectorAll('.settings-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sub-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(`sec-${secName}`).classList.add('active');
+            if (event && event.target) event.target.classList.add('active');
+        }
+
+        async function openGameFolder() {
+            const invoke = getInvoke();
+            if (invoke) {
+                try {
+                    await invoke("open_minecraft_folder");
+                } catch (e) {
+                    console.error("Failed to open folder:", e);
+                }
+            }
+        }
+
+        function syncColorInput(source, val) {
+            const picker = document.getElementById("accentPicker");
+            const hex = document.getElementById("accentHex");
+
+            if (source === 'picker') {
+                hex.value = val;
+            } else {
+                if (/^#[0-9A-F]{6}$/i.test(val)) {
+                    picker.value = val;
+                }
+            }
+            applyTheme();
+        }
+
+        function syncButtonColor(source, val) {
+            const picker = document.getElementById("buttonPicker");
+            const hex = document.getElementById("buttonHex");
+
+            if (source === 'picker') {
+                hex.value = val;
+            } else {
+                if (/^#[0-9A-F]{6}$/i.test(val)) {
+                    picker.value = val;
+                }
+            }
+            applyTheme();
+        }
+
+        function applyTheme() {
+            const color = document.getElementById("accentHex").value || "#00b37e";
+            const btnColor = document.getElementById("buttonHex").value || "#202024";
+            const bgUrl = document.getElementById("bgImage").value.trim();
+
+            document.documentElement.style.setProperty('--accent-color', color);
+            document.documentElement.style.setProperty('--button-custom-bg', btnColor);
+
+            if (bgUrl) {
+                document.body.style.backgroundImage = `url('${bgUrl}')`;
+            } else {
+                document.body.style.backgroundImage = 'none';
+            }
+            saveSettings(false);
+        }
+
+        function syncRamInput(source, val) {
+            const range = document.getElementById("ramRange");
+            const number = document.getElementById("ramNumber");
+            
+            let parsed = parseInt(val) || 4096;
+            if (source === 'range') {
+                number.value = parsed;
+            } else {
+                if (parsed < 512) parsed = 512;
+                range.value = parsed > 16384 ? 16384 : parsed;
+                number.value = parsed;
+            }
+            saveSettings(false);
+        }
+
         async function loadMinecraftVersions(preferredVersion) {
-            const versionSelect = document.getElementById("main-version");
             const cachedVersions = localStorage.getItem("mc_versions_cache");
             
             if (cachedVersions) {
@@ -225,14 +553,48 @@
             }
 
             try {
-                const response = await fetch("https://launchermeta.mojang.com/mc/game/version_manifest.json");
-                const data = await response.json();
-                localStorage.setItem("mc_versions_cache", JSON.stringify(data.versions));
-                populateVersionSelect(data.versions, preferredVersion);
+                const [mojangRes, fabricRes] = await Promise.all([
+                    fetch("https://launchermeta.mojang.com/mc/game/version_manifest.json"),
+                    fetch("https://meta.fabricmc.net/v2/versions/game")
+                ]);
+
+                const mojangData = await mojangRes.json();
+                const fabricGames = await fabricRes.json();
+
+                let allVersions = [];
+                const fabricGameVersions = new Set(fabricGames.map(g => g.version));
+
+                mojangData.versions.forEach(ver => {
+                    allVersions.push({
+                        id: ver.id,
+                        text: `${ver.id} (${ver.type})`,
+                        type: ver.type
+                    });
+
+                    if (fabricGameVersions.has(ver.id)) {
+                        allVersions.push({
+                            id: `${ver.id}-fabric`,
+                            text: `${ver.id} (Fabric)`,
+                            type: 'fabric'
+                        });
+                    }
+                });
+
+                allVersions.unshift({
+                    id: "26.3-fabric",
+                    text: "26.3 (Fabric - Snapshot)",
+                    type: "fabric"
+                });
+                allVersions.unshift({
+                    id: "26.3",
+                    text: "26.3 (Vanilla - Snapshot)",
+                    type: "snapshot"
+                });
+
+                localStorage.setItem("mc_versions_cache", JSON.stringify(allVersions));
+                populateVersionSelect(allVersions, preferredVersion);
             } catch (e) {
-                if (!cachedVersions) {
-                    versionSelect.innerHTML = `<option value="1.21.4">1.21.4</option>`;
-                }
+                console.error("Background version sync error:", e);
             }
         }
 
@@ -244,13 +606,13 @@
             versions.forEach(ver => {
                 const option = document.createElement("option");
                 option.value = ver.id;
-                option.textContent = `${ver.id} (${ver.type})`;
+                option.textContent = ver.text;
                 versionSelect.appendChild(option);
             });
 
             if (preferredVersion && Array.from(versionSelect.options).some(o => o.value === preferredVersion)) {
                 versionSelect.value = preferredVersion;
-            } else if (currentSelected) {
+            } else if (currentSelected && Array.from(versionSelect.options).some(o => o.value === currentSelected)) {
                 versionSelect.value = currentSelected;
             }
         }
@@ -260,9 +622,17 @@
             if (!invoke) return;
 
             const username = document.getElementById("username").value.trim() || "Player";
-            const ramMb = parseInt(document.getElementById("ram-mb").value) || 4096;
+            const ramMb = parseInt(document.getElementById("ramNumber").value) || 4096;
             const ramGbValue = Math.max(1, Math.round(ramMb / 1024));
             const version = document.getElementById("main-version").value;
+            const javaPath = document.getElementById("java-path").value.trim() || "java";
+            const accentColor = document.getElementById("accentHex").value || "#00b37e";
+            const buttonColor = document.getElementById("buttonHex").value || "#202024";
+            const bgImage = document.getElementById("bgImage").value.trim();
+
+            localStorage.setItem("launcher_accent", accentColor);
+            localStorage.setItem("launcher_button", buttonColor);
+            localStorage.setItem("launcher_bg", bgImage);
 
             const newSettings = {
                 username: username,
@@ -270,8 +640,8 @@
                 selected_version: version,
                 ramGb: ramGbValue,
                 ram_gb: ramGbValue,
-                javaPath: "java",
-                java_path: "java"
+                javaPath: javaPath,
+                java_path: javaPath
             };
 
             try {
@@ -284,6 +654,32 @@
         }
 
         window.addEventListener("DOMContentLoaded", async () => {
+            const savedAccent = localStorage.getItem("launcher_accent");
+            const savedButton = localStorage.getItem("launcher_button");
+            const savedBg = localStorage.getItem("launcher_bg");
+
+            if (savedAccent) {
+                document.getElementById("accentPicker").value = savedAccent;
+                document.getElementById("accentHex").value = savedAccent;
+            }
+            if (savedButton) {
+                document.getElementById("buttonPicker").value = savedButton;
+                document.getElementById("buttonHex").value = savedButton;
+            }
+            if (savedBg) {
+                document.getElementById("bgImage").value = savedBg;
+            }
+            applyTheme();
+
+            if (window.__TAURI__ && window.__TAURI__.event) {
+                window.__TAURI__.event.listen('launcher-progress', (event) => {
+                    const { percent, message } = event.payload;
+                    document.getElementById("progressBar").style.width = `${percent}%`;
+                    document.getElementById("progressPercent").textContent = `${percent}%`;
+                    document.getElementById("progressText").textContent = message;
+                });
+            }
+
             const invoke = getInvoke();
             if (invoke) {
                 try {
@@ -291,60 +687,74 @@
                     if (settings) {
                         document.getElementById("username").value = settings.username || settings.userName || "Player";
                         
-                        const ram = settings.ramGb || settings.ram_gb || 4;
-                        document.getElementById("ram-mb").value = ram * 1024;
+                        const ramGb = settings.ramGb || settings.ram_gb || 4;
+                        const ramMb = ramGb * 1024;
+                        document.getElementById("ramRange").value = ramMb > 16384 ? 16384 : ramMb;
+                        document.getElementById("ramNumber").value = ramMb;
 
-                        const savedVer = settings.selectedVersion || settings.selected_version || "1.21.4";
+                        document.getElementById("java-path").value = settings.javaPath || settings.java_path || "java";
+
+                        const savedVer = settings.selectedVersion || settings.selected_version || "1.21.1";
                         await loadMinecraftVersions(savedVer);
                     }
                 } catch (e) {
                     console.error("Error loading settings:", e);
-                    await loadMinecraftVersions("1.21.4");
+                    await loadMinecraftVersions("1.21.1");
                 }
             } else {
-                await loadMinecraftVersions("1.21.4");
+                await loadMinecraftVersions("1.21.1");
             }
 
             document.getElementById("main-version").addEventListener("change", () => saveSettings(false));
             document.getElementById("username").addEventListener("input", () => saveSettings(false));
-            document.getElementById("ram-mb").addEventListener("input", () => saveSettings(false));
+            document.getElementById("ramNumber").addEventListener("input", () => saveSettings(false));
+            document.getElementById("java-path").addEventListener("input", () => saveSettings(false));
         });
 
         async function launchGame() {
-            const statusText = document.getElementById("status-text");
-            statusText.style.color = "#00b37e";
-            statusText.innerText = "Зберігаємо налаштування...";
+            const playBtn = document.getElementById("playBtn");
+            const progressWrapper = document.getElementById("progressWrapper");
+            const progressBar = document.getElementById("progressBar");
+            const progressText = document.getElementById("progressText");
+            const progressPercent = document.getElementById("progressPercent");
+
+            playBtn.disabled = true;
+            playBtn.textContent = "LAUNCHING...";
+            
+            progressWrapper.classList.add("visible");
+            progressBar.style.width = "0%";
+            progressPercent.textContent = "0%";
+            progressText.textContent = "Preparing launch parameters...";
+            progressText.style.color = "var(--accent-color)";
 
             await saveSettings(false);
             const invoke = getInvoke();
             if (!invoke) {
-                statusText.style.color = "#f75a68";
-                statusText.innerText = "Помилка: Tauri invoke не знайдено!";
+                progressText.textContent = "Error: Tauri invoke not found!";
+                progressText.style.color = "#f75a68";
+                playBtn.disabled = false;
+                playBtn.textContent = "PLAY";
                 return;
             }
 
             const username = document.getElementById("username").value.trim() || "Player";
-            const ramMb = parseInt(document.getElementById("ram-mb").value) || 4096;
+            const ramMb = parseInt(document.getElementById("ramNumber").value) || 4096;
             const ramGbValue = Math.max(1, Math.round(ramMb / 1024));
             const version = document.getElementById("main-version").value;
 
             try {
-                statusText.innerText = `Завантаження та запуск Minecraft ${version}... (Дивіться лог у терміналі)`;
-
-                const result = await invoke("launch_minecraft", { 
+                await invoke("launch_minecraft", { 
                     username: username, 
                     ramGb: ramGbValue, 
                     version: version 
                 });
-
-                statusText.style.color = "#00b37e";
-                statusText.innerText = result;
-                alert(result);
             } catch (e) {
                 console.error("Launch error:", e);
-                statusText.style.color = "#f75a68";
-                statusText.innerText = "Помилка: " + e;
-                alert("Launch error: " + e);
+                progressText.textContent = "Error: " + e;
+                progressText.style.color = "#f75a68";
+            } finally {
+                playBtn.disabled = false;
+                playBtn.textContent = "PLAY";
             }
         }
     </script>

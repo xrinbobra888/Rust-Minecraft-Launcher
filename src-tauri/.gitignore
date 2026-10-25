@@ -2,4 +2,8 @@
 # will have compiled files and executables
 /target/
 /gen/schemas
-/logs
+
+logs/
+src-tauri/logs/
+target/
+

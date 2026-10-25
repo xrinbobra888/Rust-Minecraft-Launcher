@@ -1,35 +1,63 @@
-[18:40:14] [Client thread/INFO]: Setting user: l0pol
-[18:40:15] [Client thread/WARN]: Skipping bad option: lastServer:
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.pickItem:key.mouse.middle
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.playerlist:key.keyboard.tab
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.advancements:key.keyboard.l
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.5:key.keyboard.5
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.6:key.keyboard.6
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.7:key.keyboard.7
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.8:key.keyboard.8
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.1:key.keyboard.1
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.2:key.keyboard.2
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.3:key.keyboard.3
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.4:key.keyboard.4
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.sprint:key.keyboard.left.control
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.forward:key.keyboard.w
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.drop:key.keyboard.q
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.back:key.keyboard.s
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.attack:key.mouse.left
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.use:key.mouse.right
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.saveToolbarActivator:key.keyboard.c
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.smoothCamera:key.keyboard.unknown
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.right:key.keyboard.d
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.jump:key.keyboard.space
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.sneak:key.keyboard.left.shift
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.spectatorOutlines:key.keyboard.unknown
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.left:key.keyboard.a
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.command:key.keyboard.slash
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.screenshot:key.keyboard.f2
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.hotbar.9:key.keyboard.9
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.togglePerspective:key.keyboard.f5
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.chat:key.keyboard.t
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.inventory:key.keyboard.e
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.fullscreen:key.keyboard.f11
-[18:40:15] [Client thread/WARN]: Skipping bad option: key_key.loadToolbarActivator:key.keyboard.x
-[18:40:15] [Client thread/INFO]: LWJGL Version: 2.9.4
+[15:41:31] [Datafixer Bootstrap #0/INFO]: 295 Datafixer optimizations took 450 milliseconds
+[15:41:35] [main/INFO]: Completely ignored arguments: [--userType, legacy]
+[15:41:35] [Render thread/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
+[15:41:35] [Render thread/INFO]: Setting user: Player
+[15:41:35] [Render thread/INFO]: Backend library: LWJGL version 3.4.1+2
+[15:41:36] [Download-2/ERROR]: Failed to fetch user properties
+com.mojang.authlib.exceptions.InvalidCredentialsException: Status: 401
+	at com.mojang.authlib.exceptions.MinecraftClientHttpException.toAuthenticationException(MinecraftClientHttpException.java:70)
+	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:173)
+	at net.minecraft.client.Minecraft.lambda$new$1(Minecraft.java:438)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1789)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+Caused by: MinecraftClientHttpException[type=HTTP_ERROR, status=401, response=ErrorResponse[path=/player/attributes, error=null, errorMessage=null, details=null]]
+	at com.mojang.authlib.minecraft.client.MinecraftClient.buildHttpException(MinecraftClient.java:170)
+	at com.mojang.authlib.minecraft.client.MinecraftClient.readServiceResponse(MinecraftClient.java:147)
+	at com.mojang.authlib.minecraft.client.MinecraftClient.getWithEtag(MinecraftClient.java:81)
+	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:65)
+	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:123)
+	... 5 more
+[15:41:37] [Render thread/INFO]: Using graphics backend OpenGL, using drivers: 3.3.0 NVIDIA 621.01
+[15:41:37] [Render thread/INFO]: Using graphics device: NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2 (NVIDIA Corporation)
+[15:41:37] [Render thread/INFO]: Using graphics device extensions: GL_ARB_multi_draw_indirect, GL_ARB_buffer_storage, GL_ARB_shader_draw_parameters, GL_ARB_base_instance, GL_KHR_debug, GL_ARB_draw_indirect, GL_ARB_clip_control, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+[15:41:37] [Render thread/INFO]: Reloading ResourceManager: vanilla
+[15:41:37] [Worker-Main-11/INFO]: Found unifont_pua-17.0.01.hex, loading
+[15:41:37] [Worker-Main-15/INFO]: Found unifont_all_no_pua-17.0.01.hex, loading
+[15:41:37] [Download-1/INFO]: Could not authorize you against Realms server: java.lang.RuntimeException: Failed to parse into SignedJWT: 0
+[15:41:37] [Download-1/ERROR]: Failed to fetch Realms feature flags
+com.mojang.realmsclient.exception.RealmsServiceException: Realms authentication error with message 'java.lang.RuntimeException: Failed to parse into SignedJWT: 0'
+	at com.mojang.realmsclient.client.RealmsClient.execute(RealmsClient.java:528)
+	at com.mojang.realmsclient.client.RealmsClient.fetchFeatureFlags(RealmsClient.java:187)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1789)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+[15:41:38] [Worker-Main-15/INFO]: Found unifont_jp_patch-17.0.01.hex, loading
+[15:41:39] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on Speakers (Logitech Wireless Headset)
+[15:41:39] [Render thread/INFO]: Sound engine started
+[15:41:39] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[15:41:39] [Render thread/INFO]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
+[15:41:39] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
+[15:41:39] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[15:41:39] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
+[15:41:39] [Render thread/INFO]: Created: 2048x2048x4 minecraft:textures/atlas/blocks.png-atlas
+[15:41:39] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
+[15:41:39] [Render thread/INFO]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
+[15:41:39] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
+[15:41:39] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
+[15:41:39] [Render thread/INFO]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
+[15:41:39] [Render thread/INFO]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[15:41:39] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
+[15:41:44] [Download-1/INFO]: Could not authorize you against Realms server: java.lang.RuntimeException: Failed to parse into SignedJWT: 0
+[15:41:44] [Download-1/ERROR]: Couldn't connect to realms
+com.mojang.realmsclient.exception.RealmsServiceException: Realms authentication error with message 'java.lang.RuntimeException: Failed to parse into SignedJWT: 0'
+	at com.mojang.realmsclient.client.RealmsClient.execute(RealmsClient.java:528)
+	at com.mojang.realmsclient.client.RealmsClient.clientCompatible(RealmsClient.java:308)
+	at com.mojang.realmsclient.RealmsAvailability.lambda$check$0(RealmsAvailability.java:48)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1789)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+[15:41:49] [Render thread/INFO]: Stopping!
