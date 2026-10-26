@@ -1,4 +1,4 @@
-/target
-/.vscode
-/logs
-/node_modules
+target
+.vscode
+logs
+node_modules

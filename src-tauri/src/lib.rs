@@ -2,6 +2,7 @@ mod settings;
 
 use settings::{load_settings, save_settings, LauncherSettings};
 use serde::Deserialize;
+use tauri::http::version;
 use std::collections::{HashMap, HashSet};
 use std::fs::{self, File};
 use std::io::Write;
@@ -9,6 +10,8 @@ use std::path::PathBuf;
 use std::process::Command;
 use uuid::Uuid;
 use tauri::Emitter;
+use flate2::read::GzDecoder;
+use tar::Archive;
 
 #[derive(Debug, Deserialize)]
 struct VersionManifest {
@@ -148,6 +151,20 @@ fn open_minecraft_folder() -> Result<(), String> {
             .spawn()
             .map_err(|e| e.to_string())?;
     }
+    #[cfg(target_os = "macos")]
+    {
+        Command::new("open")
+            .arg(mc_dir)
+            .spawn()
+            .map_err(|e| e.to_string())?;
+    }
+    #[cfg(target_os = "linux")]
+    {
+        Command::new("xdg-open")
+            .arg(mc_dir)
+            .spawn()
+            .map_err(|e| e.to_string())?;
+    }
     
     Ok(())
 }
@@ -161,11 +178,12 @@ async fn download_file(client: &reqwest::Client, url: &str, target_path: &PathBu
         if let Ok(metadata) = fs::metadata(target_path) {
             if metadata.len() > 100 {
                 if let Ok(file) = File::open(target_path) {
+                    println!("{}", target_path.display());
                     if target_path.extension().map_or(false, |e| e == "zip" || e == "jar") {
                         if zip::ZipArchive::new(file).is_ok() {
                             return Ok(());
                         }
-                    } else {
+                    } else{
                         return Ok(());
                     }
                 }
@@ -199,47 +217,95 @@ async fn ensure_java_runtime(client: &reqwest::Client, major_version: u32, app: 
         java_home.join("bin").join("java")
     };
 
+    println!("{}", java_exe.display());
+
     if java_exe.exists() {
         return Ok(java_exe);
     }
 
     let _ = app.emit("launcher-progress", serde_json::json!({ "percent": 35, "message": format!("Downloading Java {} runtime...", major_version) }));
 
+    let target_os = if cfg!(target_os = "windows") {"windows"}
+        else if cfg!(target_os = "macos"){"mac"} 
+        else {"linux"};
+    
+    let target_arch = if cfg!(target_arch = "x86_64") {"x86_64"}
+        else if cfg!(target_arch = "x86") {"x86"}
+        else if cfg!(target_arch = "aarch64") {"aarch64"}
+        else {""};
+
     let api_url = format!(
-        "https://api.adoptium.net/v3/binary/latest/{}/ga/windows/x64/jdk/hotspot/normal/eclipse",
-        major_version
+        "https://api.adoptium.net/v3/binary/latest/{}/ga/{}/{}/jdk/hotspot/normal/eclipse",
+        major_version,
+        target_os,
+        target_arch
     );
 
-    let zip_path = runtimes_dir.join(format!("java_{}.zip", major_version));
+    let file_extension = if target_os == "windows" { "zip" }
+                            else { "tar.gz" };
+
+    let zip_path = runtimes_dir.join(format!("java_{}_{}_{}.{}", major_version, target_os, target_arch, file_extension));
     download_file(client, &api_url, &zip_path).await?;
 
     let _ = app.emit("launcher-progress", serde_json::json!({ "percent": 42, "message": "Extracting Java runtime files..." }));
 
     let file = File::open(&zip_path)?;
-    let mut archive = zip::ZipArchive::new(file)?;
+
+
+    if target_os == "windows"{
+        let mut archive = zip::ZipArchive::new(file)?;
     
-    fs::create_dir_all(&java_home)?;
+        fs::create_dir_all(&java_home)?;
 
-    for i in 0..archive.len() {
-        let mut file = archive.by_index(i)?;
-        let name = file.name().to_string();
-        let parts: Vec<&str> = name.split('/').collect();
-        if parts.len() <= 1 {
-            continue;
-        }
-        let relative_path: PathBuf = parts[1..].iter().collect();
-        let out_path = java_home.join(relative_path);
-
-        if file.is_dir() {
-            fs::create_dir_all(&out_path)?;
-        } else {
-            if let Some(parent) = out_path.parent() {
-                fs::create_dir_all(parent)?;
+        for i in 0..archive.len() {
+            let mut file = archive.by_index(i)?;
+            let name = file.name().to_string();
+            let parts: Vec<&str> = name.split('/').collect();
+            if parts.len() <= 1 {
+                continue;
             }
-            let mut outfile = File::create(&out_path)?;
-            std::io::copy(&mut file, &mut outfile)?;
-        }
+            let relative_path: PathBuf = parts[1..].iter().collect();
+            let out_path = java_home.join(relative_path);
+
+            if file.is_dir() {
+                fs::create_dir_all(&out_path)?;
+            } else {
+                if let Some(parent) = out_path.parent() {
+                    fs::create_dir_all(parent)?;
+                }
+                let mut outfile = File::create(&out_path)?;
+                std::io::copy(&mut file, &mut outfile)?;
+            }
+        } 
+    } else{
+        let tar_gz = File::open(&zip_path)?;
+        let java_path = runtimes_dir.join(format!("java-runtime-{}", major_version));
+
+        fs::create_dir_all(&java_home)?;
+
+        let tar = GzDecoder::new(tar_gz);
+        let mut archive = Archive::new(tar);
+
+        let mut dir_name = PathBuf::new();
+
+        println!("Extracted the following files:");
+        _ = archive
+            .entries()?
+            .filter_map(|e| e.ok())
+            .map(|mut entry| -> Result<PathBuf, Box<dyn std::error::Error>> {
+                let path = runtimes_dir.join(entry.path()?.strip_prefix("")?.to_owned());
+
+                if dir_name.is_empty() {dir_name = path.to_path_buf(); println!("{}", dir_name.display())}
+
+                entry.unpack(&path)?;
+                Ok(path)
+            })
+            .filter_map(|e| e.ok())
+            .for_each(|x| println!("Unpacked: {}", x.display()));
+
+        fs::rename(dir_name, runtimes_dir.join(java_path))?
     }
+    
 
     let _ = fs::remove_file(&zip_path);
 
@@ -553,7 +619,9 @@ async fn launch_minecraft(app: tauri::AppHandle, username: String, ram_gb: u32, 
         }
 
         let _ = app.emit("launcher-progress", serde_json::json!({ "percent": 98, "message": "Launching Minecraft process..." }));
-        let cp_string = classpath.join(";");
+        let cp_string = if cfg!(target_os = "windows") { classpath.join(";") }
+                                else { classpath.join(":") };
+
         let offline_uuid = Uuid::new_v3(&Uuid::NAMESPACE_DNS, format!("OfflinePlayer:{}", username).as_bytes())
             .simple()
             .to_string();
